@@ -14,7 +14,7 @@ RUN cargo build --release && cargo install cargo-license && cargo license \
 	--filter-platform "$(rustc -vV | sed -n 's|host: ||p')" \
 	> CREDITS
 
-FROM debian:bookworm-slim@sha256:7095ea629c4563714b9655137db2eacd456eb3eea0eb8a2b0a4a6b0b187220a9
+FROM debian:bookworm-slim@sha256:b73bf02f32434c9be21adf83b9aedf33e731784d8d2dacbbd3ce5f4993f2a2de
 
 WORKDIR /
 
