@@ -18,7 +18,7 @@ FROM debian:bookworm-slim@sha256:b73bf02f32434c9be21adf83b9aedf33e731784d8d2dacb
 
 RUN apt-get update; \
 	apt-get install -y --no-install-recommends \
-		libssl3; \
+		libssl3 ca-certificates; \
 	apt-get clean;
 
 WORKDIR /
