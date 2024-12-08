@@ -68,32 +68,32 @@ impl std::str::FromStr for Value {
 
 #[test]
 fn test_value() {
-    assert_eq!(Value::from_str("0[W]"), Ok(Value::Wattage(0)));
-    assert_eq!(Value::from_str("100[W]"), Ok(Value::Wattage(100)));
-    assert_eq!(Value::from_str("-100[W]"), Ok(Value::Wattage(-100)));
-    assert_eq!(Value::from_str("0時0分"), Ok(Value::TimeInMinutes(0)));
+    assert_eq!("0[W]".parse(), Ok(Value::Wattage(0)));
+    assert_eq!("100[W]".parse(), Ok(Value::Wattage(100)));
+    assert_eq!("-100[W]".parse(), Ok(Value::Wattage(-100)));
+    assert_eq!("0時0分".parse(), Ok(Value::TimeInMinutes(0)));
     assert_eq!(
-        Value::from_str("10時10分"),
+        "10時10分".parse(),
         Ok(Value::TimeInMinutes(10 * 60 + 10))
     );
     assert_eq!(
-        Value::from_str("22時10分"),
+        "22時10分".parse(),
         Ok(Value::TimeInMinutes(22 * 60 + 10))
     );
     assert_eq!(
-        Value::from_str("23時59分"),
+        "23時59分".parse(),
         Ok(Value::TimeInMinutes(24 * 60 - 1))
     );
     assert_eq!(
-        Value::from_str("ピークシフトモード"),
+        "ピークシフトモード".parse(),
         Ok(Value::Mode("ピークシフト".to_string()))
     );
     assert_eq!(
-        Value::from_str("有"),
+        "有".parse(),
         Ok(Value::Boolean(true))
     );
     assert_eq!(
-        Value::from_str("無"),
+        "無".parse(),
         Ok(Value::Boolean(false))
     );
 }
