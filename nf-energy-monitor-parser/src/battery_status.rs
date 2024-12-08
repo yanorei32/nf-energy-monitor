@@ -35,8 +35,7 @@ fn get_remaining(html: &Html) -> Option<u32> {
 
     html.select(&font_selector)
         .next()
-        .map(|e| e.inner_html().parse().ok())
-        .flatten()
+        .and_then(|e| e.inner_html().parse().ok())
 }
 
 fn get_state(html: &Html) -> Option<State> {
@@ -44,8 +43,7 @@ fn get_state(html: &Html) -> Option<State> {
 
     html.select(&font_selector)
         .next()
-        .map(|e| e.attr("alt").map(|alt| State::try_from_alt(alt)).flatten())
-        .flatten()
+        .and_then(|e| e.attr("alt").and_then(State::try_from_alt))
 }
 
 impl Battery {

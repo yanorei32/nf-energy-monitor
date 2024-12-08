@@ -26,8 +26,10 @@ pub enum ParseError {
     UnknownDataType,
 }
 
-impl Value {
-    pub fn from_str(s: &str) -> Result<Self, ParseError> {
+impl std::str::FromStr for Value {
+    type Err = ParseError;
+
+    fn from_str(s: &str) -> Result<Self, ParseError> {
         match s.trim() {
             "有" => Ok(Self::Boolean(true)),
             "無" => Ok(Self::Boolean(false)),

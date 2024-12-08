@@ -9,7 +9,7 @@ impl ValueMap {
     pub fn from_partial_html(html: &str) -> Self {
         Self(HashMap::from_iter(html.split("<br>").filter_map(|l| {
             match l.split(':').collect::<Vec<_>>()[..] {
-                [key, value] => Some((key.trim().to_string(), Value::from_str(value))),
+                [key, value] => Some((key.trim().to_string(), value.parse())),
                 _ => None,
             }
         })))
