@@ -16,6 +16,11 @@ RUN cargo build --release && cargo install cargo-license && cargo license \
 
 FROM debian:bookworm-slim@sha256:b73bf02f32434c9be21adf83b9aedf33e731784d8d2dacbbd3ce5f4993f2a2de
 
+RUN apt-get update; \
+	apt-get install -y --no-install-recommends \
+		libssl3; \
+	apt-get clean;
+
 WORKDIR /
 
 COPY --chown=root:root --from=build-env \
