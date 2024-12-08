@@ -1,6 +1,6 @@
 use std::num::ParseIntError;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Clone)]
 pub enum Value {
     Wattage(i32),
     TimeInMinutes(u32),
@@ -8,7 +8,18 @@ pub enum Value {
     Boolean(bool),
 }
 
-#[derive(Debug, PartialEq, Eq)]
+impl std::fmt::Debug for Value {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Value::Wattage(n) => write!(f, "{n}[W]"),
+            Value::TimeInMinutes(n) => write!(f, "{:02}:{:02}", n / 60, n % 60),
+            Value::Mode(s) => write!(f, "{s}[モード]"),
+            Value::Boolean(b) => write!(f, "{b}"),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum ParseError {
     ParseIntError(ParseIntError),
     InvalidTimeFormat,

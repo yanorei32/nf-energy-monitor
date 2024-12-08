@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{ParseError, Value};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ValueMap(pub HashMap<String, Result<Value, ParseError>>);
 
 impl ValueMap {

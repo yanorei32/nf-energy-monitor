@@ -9,7 +9,6 @@ use influxdb2::{
     Client,
 };
 use tokio::time;
-use tracing::{event, span, Level};
 
 #[derive(Debug, Parser)]
 struct Cli {
@@ -29,12 +28,12 @@ enum Commands {
         nf_host: String,
 
         #[command(flatten)]
-        influx: InfluxInfo,
+        influx: InfluxConnectionInfo,
     },
 }
 
 #[derive(Debug, Parser)]
-struct InfluxInfo {
+struct InfluxConnectionInfo {
     #[clap(long, env)]
     infl_host: String,
 
@@ -43,6 +42,9 @@ struct InfluxInfo {
 
     #[clap(long, env)]
     infl_org: String,
+
+    #[clap(long, env)]
+    infl_bucket: String,
 }
 
 #[tokio::main(flavor = "current_thread")]
@@ -51,20 +53,20 @@ async fn main() {
 
     tracing_subscriber::fmt().init();
 
-    let (host, influx_client): (String, Option<Client>) = match cli.command {
+    let (host, influx): (String, Option<(Client, String)>) = match cli.command {
         Commands::DryRun { nf_host } => (nf_host, None),
         Commands::Run { nf_host, influx } => (
             nf_host,
-            Some(Client::new(
-                influx.infl_host,
-                influx.infl_org,
-                influx.infl_token,
+            Some((
+                Client::new(influx.infl_host, influx.infl_org, influx.infl_token),
+                influx.infl_bucket,
             )),
         ),
     };
 
     let http_client = reqwest::Client::builder()
         .user_agent("nf-energy-monitor-logger/0.0.0")
+        .timeout(Duration::from_millis(300))
         .build()
         .unwrap();
 
@@ -75,7 +77,7 @@ async fn main() {
 
         let host = host.clone();
         let http_client = http_client.clone();
-        let influx_client = influx_client.clone();
+        let influx = influx.clone();
 
         tokio::spawn(async move {
             let gui = async {
@@ -106,7 +108,6 @@ async fn main() {
 
             let time = std::time::SystemTime::now();
 
-
             let unix_nanos = time
                 .duration_since(std::time::UNIX_EPOCH)
                 .unwrap()
@@ -114,14 +115,14 @@ async fn main() {
 
             let (battery, val) = tokio::join!(gui, val);
 
-            tracing::info!("Battery {}%", battery.remaining);
+            tracing::debug!("Battery {}% {:?}", battery.remaining, battery.state);
 
             use itertools::Itertools;
             for (k, val) in val.0.iter().sorted_by_key(|v| v.0) {
-                tracing::info!("  {k}: {val:?}");
+                tracing::debug!("  {k}: {val:?}");
             }
 
-            if let Some(influx_client) = influx_client {
+            if let Some((influx_client, bucket)) = influx {
                 let mut data_builder = DataPoint::builder("battery")
                     .tag("host", &host)
                     .timestamp(unix_nanos)
@@ -146,7 +147,7 @@ async fn main() {
                 let data = data_builder.build().unwrap();
 
                 influx_client
-                    .write("nf-energy-monitor", stream::iter([data]))
+                    .write(&bucket, stream::iter([data]))
                     .await
                     .unwrap();
             };
