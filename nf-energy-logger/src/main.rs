@@ -9,6 +9,7 @@ use influxdb2::{
     Client,
 };
 use tokio::time;
+use tracing::{event, span, Level};
 
 #[derive(Debug, Parser)]
 struct Cli {
@@ -47,6 +48,8 @@ struct InfluxInfo {
 #[tokio::main(flavor = "current_thread")]
 async fn main() {
     let cli = Cli::parse();
+
+    tracing_subscriber::fmt().init();
 
     let (host, influx_client): (String, Option<Client>) = match cli.command {
         Commands::DryRun { nf_host } => (nf_host, None),
@@ -102,6 +105,8 @@ async fn main() {
             };
 
             let time = std::time::SystemTime::now();
+
+
             let unix_nanos = time
                 .duration_since(std::time::UNIX_EPOCH)
                 .unwrap()
@@ -109,7 +114,12 @@ async fn main() {
 
             let (battery, val) = tokio::join!(gui, val);
 
-            println!("{battery:?} {val:?}");
+            tracing::info!("Battery {}%", battery.remaining);
+
+            use itertools::Itertools;
+            for (k, val) in val.0.iter().sorted_by_key(|v| v.0) {
+                tracing::info!("  {k}: {val:?}");
+            }
 
             if let Some(influx_client) = influx_client {
                 let mut data_builder = DataPoint::builder("battery")

@@ -16,3 +16,4 @@ encoding_rs = "0.8.35"
 futures = "0.3.31"
 
 nf-energy-monitor-parser = { path = "../nf-energy-monitor-parser" }
+itertools = "0.13.0"
