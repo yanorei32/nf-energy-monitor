@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+
+members = [
+	"nf-energy-logger",
+	"nf-energy-monitor-parser",
+]
