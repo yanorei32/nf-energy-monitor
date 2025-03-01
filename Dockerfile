@@ -14,7 +14,7 @@ RUN cargo build --release && cargo install cargo-license && cargo license \
 	--filter-platform "$(rustc -vV | sed -n 's|host: ||p')" \
 	> CREDITS
 
-FROM debian:bookworm-slim@sha256:719ab80ef51a82a0a3e92a72436d8a8a027b10da6d8eea114db7e44a68c0a32e
+FROM debian:bookworm-slim@sha256:ceac69add95cb9ac0d99d9569350cc36838b76397d986e1ccc284bd034b58a9f
 
 RUN apt-get update; \
 	apt-get install -y --no-install-recommends \
