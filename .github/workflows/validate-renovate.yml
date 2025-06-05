@@ -16,7 +16,7 @@ jobs:
 
       - name: install
         run: |
-          npm install -g renovate
+          npm install -g renovate@40
 
       - name: validate
         run: |
