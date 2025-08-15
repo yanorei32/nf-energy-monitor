@@ -13,7 +13,7 @@
       "datasourceTemplate": "repology"
     },
     {
-      "managerFilePatterns": ["Dockerfile", "ci.yml"],
+      "fileMatch": ["Dockerfile", "ci.yml"],
       "matchStrings": [
         "depName=(?<depName>.*?)?\\s.*?_VERSION=\"(?<currentValue>.*?)\""
       ],
