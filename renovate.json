@@ -3,12 +3,9 @@
     "config:recommended",
     "https://github.com/arkedge/renovate-config/raw/main/rust-toolchain.json5"
   ],
-  "customManagers": [
+  "regexManagers": [
     {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/init.sh/"
-      ],
+      "fileMatch": ["init.sh"],
       "matchStrings": [
         "depName=(?<depName>.*?)?\\s.*?_VERSION=\"(?<currentValue>.*?)\""
       ],
@@ -16,11 +13,7 @@
       "datasourceTemplate": "repology"
     },
     {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/Dockerfile/",
-        "/ci.yml/"
-      ],
+      "managerFilePatterns": ["Dockerfile", "ci.yml"],
       "matchStrings": [
         "depName=(?<depName>.*?)?\\s.*?_VERSION=\"(?<currentValue>.*?)\""
       ],
